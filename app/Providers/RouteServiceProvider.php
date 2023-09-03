@@ -29,11 +29,19 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            Route::middleware('api')
+            $web = ['web'];
+            $api = ['api'];
+
+            if (config('multitenancy.enable')) {
+                array_push($web,  'tenant.web');
+                array_push($api,  'tenant.api');
+            }
+
+            Route::middleware($api)
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware('web')
+            Route::middleware($web)
                 ->group(base_path('routes/web.php'));
         });
     }
